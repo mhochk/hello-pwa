@@ -27,7 +27,14 @@
     "params": {
       "title": "title",
       "text": "text",
-      "url": "url"
+      "url": "url",
+      "enctype": "multipart/form-data",
+      "files": [
+        {
+          "name": "file",
+          "accept": ["*"]
+        }
+      ]
     }
   },
   "file_handlers": [
