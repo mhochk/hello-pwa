@@ -7,6 +7,7 @@ const RUNTIME = 'runtime';
 let hash = '1/29:8:00/2020';
 
 self.addEventListener('install', (event) => {
+    console.debug("service-worker::install event", event);
     event.waitUntil(
         caches.open(PRECACHE)
         .then(cache => {
@@ -18,6 +19,7 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
+    console.debug("service-worker::activate event", event);
     // New service worker upgrade, then delete caches other than whitelist..
     const whiteList = [];  // const whiteList = [PRECACHE];
     event.waitUntil(
@@ -32,6 +34,7 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+    console.debug("service-worker::fetch event", event);
     if (event.request.url.startsWith(self.location.origin)) {
         var path = event.request.url;
 
