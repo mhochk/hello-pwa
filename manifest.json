@@ -3,7 +3,7 @@
   "short_name": "PWA Test",
   "description": "PWA Test to help PWA team",
   "categories": ["utilities", "productivity"],
-  "start_url": "https://sunggook.github.io/hello-pwa/?utm_source=app",
+  "start_url": "https://mhochk.github.io/hello-pwa/?utm_source=app",
   "theme_color": "#8E2C54",
   "scope":".",
   "background_color": "#2C488E",
@@ -23,15 +23,14 @@
   "share_target": {
     "action": "/share-target/",
     "method": "GET",
-    "enctype": "application/x-www-form-urlencoded",
+    "enctype": "multipart/form-data",
     "params": {
-      "title": "title",
-      "text": "text",
-      "url": "url",
-      "enctype": "multipart/form-data",
+      "title": "mapped_title",
+      "text": "mapped_text",
+      "url": "mapped_url",
       "files": [
         {
-          "name": "file",
+          "name": "mapped_files",
           "accept": ["*"]
         }
       ]
@@ -63,8 +62,8 @@
     },
     {
       "platform": "play",
-      "id": "android-sunggook-app",
-      "url": "https://sunggook.github.io/hello-pwa"
+      "id": "android-mhochk-app",
+      "url": "https://mhochk.github.io/hello-pwa"
     }
   ]
 }
