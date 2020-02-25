@@ -204,9 +204,9 @@ document.addEventListener('DOMContentLoaded', ()=> {
         activate_filehandler(searchParams);
 
         
-        } else {
-            show_activaton_type("file");
-        }
+        //} else {
+        //    show_activaton_type("file");
+        //}
     }
 })
 
