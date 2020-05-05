@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Post Repro</title>
+    <script>
+	document.addEventListener('DOMContentLoaded', ()=> {
+		document.querySelector('#test').addEventListener('click', testFunction);
+		document.querySelector('#test2').addEventListener('click', testFunction2);
+	});
+	function testFunction(e) {
+	    var formData = new FormData();
+		const file_input = document.querySelector('#files');
+		formData.append("myFile", file_input.files[0]);
+		var request = new XMLHttpRequest();
+		request.open("POST", "./");
+		request.send(formData);
+	}
+	function testFunction2(e) {
+		const myForm = document.querySelector('#myForm');
+		var formData = new FormData(myForm);
+		var request = new XMLHttpRequest();
+		request.open("POST", "./");
+		request.send(formData);
+	}
+	</script>
+</head>
+<body bgcolor="#E6E6FA">
+    <div>Pick a file</div>
+	<form id="myForm" method="post" target="_blank">
+	<input id="files" type="file" multiple="">
+	<input id="test" type="button" value="Test">
+	<input id="test2" type="button" value="Test (using Form)">
+	</form>
+</body>
+
+</html>
