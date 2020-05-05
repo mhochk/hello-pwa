@@ -11,8 +11,7 @@ self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(PRECACHE)
         .then(cache => {
-            // cache.addAll(sites_v1);
-            cache.addAll(persistent_image_v1);
+            cache.addAll(files_to_cache);
         })
         .then(self.skipWaiting())
     );
@@ -33,78 +32,92 @@ self.addEventListener('activate', (event) => {
     );
 });
 
+function truncate_string(str, length) {
+	if (!length) {
+		length = 100;
+	}
+	if (str.length > length) {
+		return str.substring(0, length - 3) + "...";
+	}
+	return str;
+}
+
+function tryReadFile(file) {
+    try {
+        var reader = new FileReader();
+        reader.addEventListener('load', function(e) {
+	    var text = e.target.result;
+	    console.debug("Read file '", file, "': ", truncate_string(text));
+	});
+        reader.addEventListener('error', function() {
+	    console.warn("Failed to read file '", file, "'");
+	});
+        reader.readAsText(file);
+    } catch (ex) {
+        console.warn("Failed to start reading file '", file, "'");
+    }
+}
+
 self.addEventListener('fetch', (event) => {
     console.debug("service-worker::fetch event", event);
+    // Only worry about processing events targeting this origin
     if (event.request.url.startsWith(self.location.origin)) {
+		// If this is a POST event, log what was sent and re-process as a GET event
+		if (event.request.method === "POST") {
+			event.respondWith((async () => {
+				try {
+					const formData = await event.request.formData();
+					var stringifiedFormData = "service-worker::fetch > event.formData() > entries:\r\n";
+					for (var entry of formData) {
+						stringifiedFormData += entry.toString() + "\r\n";
+						if (entry[1] instanceof File) {
+							tryReadFile(entry[1]);
+						}
+						if (entry[1] instanceof FileList) {
+							for (var file of entry[1]) {
+								tryReadFile(file);
+							}
+						}
+					}
+					console.debug(stringifiedFormData);
+				} catch (e) {
+					console.warn("service-worker::fetch > event.formData() failed: ", e);
+				}
+				return fetch(event.request.url);
+			})());
+			return;
+		}
+
+		// If this is a GET event, check if it is for a file in our cache list
         var path = event.request.url;
-
-        if (sites_v1.indexOf(path) !== -1 ||
-                persistent_image_v1.indexOf(path) !== -1) {
-            // defer checking caches.
-            event.respondWith(
-                caches.match(event.request).then(cachedResponse => {
-                    if (cachedResponse) {
-                        return cachedResponse;
-                    }
-
-                    return fetch(event.request).then(
-                        function(response) {
-                          // Check if we received a valid response
-                          if(!response || response.status !== 200 || response.type !== 'basic') {
-                            return response;
-                          } 
-
-                          // IMPORTANT: Clone the response. A response is a stream
-                          // and because we want the browser to consume the response
-                          // as well as the cache consuming the response, we need
-                          // to clone it so we have two streams.
-                          var responseToCache = response.clone();
-
-                          caches.open(RUNTIME)
-                            .then(function(cache) {
-                              cache.put(event.request, responseToCache);
-                            });
-
-                          return response;
-                        }
-                      );
-
-                    // if (FECHED_ON_SW.indexOf(path) !== -1) {
-                    //     return caches.open(RUNTIME).then(cache => {
-                    //         return fetch(event.request).then(response => {
-                    //             return cache.put(event.request, response.clone()).then(() => {
-                    //                 console.log("[SW] fetch and return on SW: " + event.request.url);
-                    //                 return response;
-                    //             });
-                    //         });
-                    //     });
-                    // } else
-                    // {
-                    //     caches.open(RUNTIME).then(cache => {
-                    //         fetch(event.request).then(response => {
-                    //             cache.put(event.request, response);
-                    //             console.log("[SW] fetch on client and cache on SW: " + event.request.url);
-                    //         });
-                    //     });
-                    //     return new Response(); // null body returns will let client fetch on the client.
-                    // }
-                })
-            );
+        if (files_to_cache.indexOf(path) !== -1) {
+			// If so, check if it is in the cache
+			event.respondWith(
+				caches.open(RUNTIME).then(function(cache) {
+					return cache.match(event.request).then(function (response) {
+						// If it is in the cache return that result, but regardless
+						// execute a new fetch to to update the cache with (and return
+						// that result if the original cache result was not available).
+						return response || fetch(event.request).then(function(response) {
+							// If we didn't receive a recognized valid response, there's nothing to cache, so just return it
+							if(!response || response.status !== 200 || response.type !== 'basic') {
+								return response;
+							}
+						
+							// Cache a clone of the response
+							cache.put(event.request, response.clone());
+							
+							// Return the response to the browser
+							return response;
+						});
+					});
+				})
+			);
         }
     }
 });
 
-var sites_v1 = [
-    "https://sunggook.github.io/hello-pwa/service-worker.js",
-    "https://sunggook.github.io/hello-pwa/",
-    "https://sunggook.github.io/hello-pwa/script.js",
-    "https://sunggook.github.io/hello-pwa/share.js",
-    "https://sunggook.github.io/hello-pwa/badging.js",
-    "https://sunggook.github.io/hello-pwa/style.css",
-
-   ]
-
-var persistent_image_v1 = [
-    "https://sunggook.github.io/hello-pwa/skull192.png",
-    "https://sunggook.github.io/hello-pwa/skull512.png",
+var files_to_cache = [
+    "https://ie-snap/scratchtests/mhochk/hochs-pwa/service-worker.js"
 ]
+

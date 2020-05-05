@@ -1,3 +1,3 @@
-# Hello PWA
+# Hoch's PWA
 
-PWA Practice Site that exercise the latest PWA features.
+Basic PWA that exposes related functionality for testing purposes.

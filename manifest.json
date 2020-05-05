@@ -1,9 +1,9 @@
 {
-  "name": "PWA Test",
-  "short_name": "PWA Test",
-  "description": "PWA Test to help PWA team",
+  "name": "Hoch's PWA",
+  "short_name": "Hoch's PWA",
+  "description": "Test app for exercising PWA functionality",
   "categories": ["utilities", "productivity"],
-  "start_url": "https://mhochk.github.io/hello-pwa/?utm_source=app",
+  "start_url": "./?custom_param=start_url_value",
   "theme_color": "#8E2C54",
   "scope":".",
   "background_color": "#2C488E",
@@ -11,17 +11,17 @@
   "orientation": "portrait",
   "icons": [
     {
-        "src": "/hello-pwa/skull192.png",
+        "src": "HochsPWA_192.png",
         "sizes": "192x192",
         "type": "image/png"
     }, {
-      "src": "/hello-pwa/skull512.png",
+      "src": "HochsPWA_512.png",
         "sizes": "512X512",
         "type": "image/png"
     }
   ],
   "share_target": {
-    "action": "/share-target/",
+    "action": "./?custom_param=share_target_value",
     "method": "POST",
     "enctype": "multipart/form-data",
     "params": {
@@ -31,23 +31,29 @@
       "files": [
         {
           "name": "mapped_files",
-          "accept": ["*"]
+          "accept": ["image/jpeg"]
         }
       ]
     }
   },
   "file_handlers": [
     {
-      "action": "/simple-text-reader",
+      "action": "./?custom_param=csv_file_handler",
       "accept": {
-        "text/csv": ".txt5"
+        "text/csv": ".csv"
       }
     },
     {
-      "action": "/",
+      "action": "/?custom_param=jpeg_file_handler",
       "accept": {
-        "text/csv": [ ".txt2, txt3" ],
-        "application/vnd.alternative-graph-app.graph": ".graph2"
+        "image/jpeg": [ ".jpg", ".jpeg" ]
+      }
+    },
+    {
+      "action": "./?custom_param=graph_file_handler",
+      "accept": {
+        "application/vnd.grafr.graph": [ ".grafr", ".graf" ],
+        "application/vnd.alternative-graph-app.graph": ".graph"
       }
     }
   ],

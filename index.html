@@ -1,8 +1,8 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <title>PWA Tester</title>
-    <link rel="manifest" href="/hello-pwa/manifest.json"></manifest>
+    <title>Hoch's PWA</title>
+    <link rel="manifest" href="manifest.json"></manifest>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="style.css">
 
@@ -40,6 +40,7 @@
     <div>
         <h3>3. Navigator.share test</h3>
         <div>
+            <form id="shareTestForm">
             <table>
                 <tbody><tr><td>Title:</td>
                     <td><input type="checkbox" id="title_checkbox" checked="" disabled></td>
@@ -59,6 +60,7 @@
                 </tr>
               </tbody>
             </table>
+            </form>
             <p>
                 <input id="share" type="button" value="Share">
                 <input id="share-no-gesture" type="button" value="Share without user gesture">
